@@ -13,7 +13,7 @@ CREATE TABLE cost_data
 (
     id                        BIGINT PRIMARY KEY,
     drg_definition            VARCHAR(512),
-    provider_id               BIGINT REFERENCES medical_provider(id),
+    medical_provider_id       BIGINT REFERENCES medical_provider(id),
     total_discharges          BIGINT,
     average_covered_charges   NUMERIC,
     average_total_payments    NUMERIC,

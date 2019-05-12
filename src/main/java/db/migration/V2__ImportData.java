@@ -45,7 +45,7 @@ public class V2__ImportData extends BaseJavaMigration {
     }
 
     private void insertRecord(Context context, CSVRecord record, Long recordId, Long providerId) {
-        try (PreparedStatement insert = context.getConnection().prepareStatement("INSERT INTO cost_data(id,drg_definition,provider_id,total_discharges,average_covered_charges,average_total_payments,average_medicare_payments) VALUES (?,?,?,?,?,?,?)")) {
+        try (PreparedStatement insert = context.getConnection().prepareStatement("INSERT INTO cost_data(id,drg_definition,medical_provider_id,total_discharges,average_covered_charges,average_total_payments,average_medicare_payments) VALUES (?,?,?,?,?,?,?)")) {
             insert.setLong(1, recordId);
             insert.setString(2, record.get(1));
             insert.setLong(3, providerId);
