@@ -1,0 +1,11 @@
+version: "3"
+services:
+  db:
+    image: "postgres:11"
+    container_name: "patients_postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=patients
+      - POSTGRES_PASSWORD=development1234
+      - POSTGRES_DB=patients
