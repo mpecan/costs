@@ -46,6 +46,24 @@ class CostRetrievalServiceIntegrationTests {
     }
 
     @Test
+    fun `should retrieve records with averageMedicarePayments above 20000 inclusive`() {
+        val min = BigDecimal.valueOf(20000.0)
+        val list = costRetrievalService.getRecordsForFilter(CostFilter(averageMedicarePayments = min to null), PAGE_REQUEST)
+        list.forEach {
+            expect(it.averageMedicarePayments).to.be.least(min)
+        }
+    }
+
+    @Test
+    fun `should retrieve records with averageMedicarePayments below 20000 inclusive`() {
+        val max = BigDecimal.valueOf(20000.0)
+        val list = costRetrievalService.getRecordsForFilter(CostFilter(averageMedicarePayments = null to max), PAGE_REQUEST)
+        list.forEach {
+            expect(it.averageMedicarePayments).to.be.most(max)
+        }
+    }
+
+    @Test
     fun `should retrieve records with averageCoveredCharges between 20000 and 30000 inclusive`() {
         val min = BigDecimal.valueOf(20000.0)
         val max = BigDecimal.valueOf(30000.0)
