@@ -1,7 +1,10 @@
 package si.pecan.domain
 
 import java.math.BigDecimal
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.ManyToOne
+import javax.persistence.Table
 
 @Entity
 @Table(name = "cost_data")

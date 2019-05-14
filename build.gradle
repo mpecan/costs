@@ -5,6 +5,7 @@ plugins {
 	id 'org.springframework.boot' version '2.1.4.RELEASE'
 	id 'org.jetbrains.kotlin.jvm' version '1.2.71'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.2.71'
+	id 'org.jetbrains.kotlin.kapt' version '1.2.71'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -15,6 +16,10 @@ sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
+}
+
+kapt {
+	generateStubs = true
 }
 
 dependencies {
@@ -28,8 +33,13 @@ dependencies {
 	
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
-	
+
+	compileOnly ('org.hibernate:hibernate-jpamodelgen')
+	kapt ('org.hibernate:hibernate-jpamodelgen')
+
+	testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation "com.winterbe:expekt:0.5.0"
 }
 
 tasks.withType(KotlinCompile) {
