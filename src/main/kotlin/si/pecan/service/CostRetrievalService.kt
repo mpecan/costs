@@ -54,6 +54,7 @@ fun CostFilter?.toSpecification(): Specification<CostRecord> {
 
 private inline fun <reified T : Number> rangeSpecification(min: T?, max: T?, specifications: MutableList<Specification<CostRecord>>, field: SingularAttribute<CostRecord, T>?) {
     when {
+        // Could not use `between` because the reification does not play well with it.
         min != null && max != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.and(criteriaBuilder.ge(record.get(field), min), criteriaBuilder.le(record.get(field), min)) })
         min != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.ge(record.get(field), min) })
         max != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.le(record.get(field), max) })
