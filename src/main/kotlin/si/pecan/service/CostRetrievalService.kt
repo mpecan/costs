@@ -8,14 +8,13 @@ import si.pecan.domain.CostRecord
 import si.pecan.domain.CostRecord_
 import si.pecan.domain.MedicalProvider
 import si.pecan.domain.MedicalProvider_
+import si.pecan.repository.CostRecordsRepository
 import java.math.BigDecimal
 import javax.persistence.criteria.*
 
 @Service
-class CostRetrievalService {
-    fun createSpecificationForFilter(filter: CostFilter): Specification<CostRecord> {
-        return filter.toSpecification()
-    }
+class CostRetrievalService(private val costRecordsRepository: CostRecordsRepository) {
+    fun getRecordsForFilter(filter: CostFilter) = costRecordsRepository.findAll(filter.toSpecification())
 }
 
 data class CostFilter(

@@ -1,14 +1,13 @@
 package si.pecan.service
 
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import com.winterbe.expekt.expect
 import org.junit.Before
 import org.junit.Test
 import si.pecan.domain.CostRecord
 import si.pecan.domain.CostRecord_
+import si.pecan.domain.MedicalProvider
+import si.pecan.domain.MedicalProvider_
 import java.math.BigDecimal
 import javax.persistence.criteria.*
 
@@ -57,16 +56,16 @@ class CostFilterToSpecificationTest {
         val maximum = BigDecimal.TEN
         val specification = CostFilter(averageCoveredCharges = minimum to maximum).toSpecification()
 
-        val dischargePathMock = mock<Path<BigDecimal>>()
+        val averageCoveredChargePathMock = mock<Path<BigDecimal>>()
         val predicateMock = mock<Predicate>()
 
-        whenever(costRecordMock.get(CostRecord_.averageCoveredCharges)).thenReturn(dischargePathMock)
-        whenever(criteriaBuilderMock.between(eq(dischargePathMock), eq(minimum), eq(maximum))).thenReturn(predicateMock)
+        whenever(costRecordMock.get(CostRecord_.averageCoveredCharges)).thenReturn(averageCoveredChargePathMock)
+        whenever(criteriaBuilderMock.between(eq(averageCoveredChargePathMock), eq(minimum), eq(maximum))).thenReturn(predicateMock)
 
         val predicate: Predicate? = specification.toPredicate(costRecordMock, criteriaQueryMock, criteriaBuilderMock)
         expect(predicate).to.be.equal(predicateMock)
-        verify(costRecordMock).get(CostRecord_.totalDischarges)
-        verify(criteriaBuilderMock).between(eq(dischargePathMock), eq(minimum), eq(maximum))
+        verify(costRecordMock).get(CostRecord_.averageCoveredCharges)
+        verify(criteriaBuilderMock).between(eq(averageCoveredChargePathMock), eq(minimum), eq(maximum))
     }
 
     @Test
@@ -75,15 +74,70 @@ class CostFilterToSpecificationTest {
         val maximum = BigDecimal.TEN
         val specification = CostFilter(averageMedicarePayments = minimum to maximum).toSpecification()
 
-        val dischargePathMock = mock<Path<BigDecimal>>()
+        val averageMedicarePaymentsPath = mock<Path<BigDecimal>>()
         val predicateMock = mock<Predicate>()
 
-        whenever(costRecordMock.get(CostRecord_.averageMedicarePayments)).thenReturn(dischargePathMock)
-        whenever(criteriaBuilderMock.between(eq(dischargePathMock), eq(minimum), eq(maximum))).thenReturn(predicateMock)
+        whenever(costRecordMock.get(CostRecord_.averageMedicarePayments)).thenReturn(averageMedicarePaymentsPath)
+        whenever(criteriaBuilderMock.between(eq(averageMedicarePaymentsPath), eq(minimum), eq(maximum))).thenReturn(predicateMock)
 
         val predicate: Predicate? = specification.toPredicate(costRecordMock, criteriaQueryMock, criteriaBuilderMock)
         expect(predicate).to.be.equal(predicateMock)
-        verify(costRecordMock).get(CostRecord_.totalDischarges)
-        verify(criteriaBuilderMock).between(eq(dischargePathMock), eq(minimum), eq(maximum))
+        verify(costRecordMock).get(CostRecord_.averageMedicarePayments)
+        verify(criteriaBuilderMock).between(eq(averageMedicarePaymentsPath), eq(minimum), eq(maximum))
+    }
+
+    @Test
+    fun `should create an a specifcation with state between when state filter is present`() {
+        val state = "AZ"
+        val specification = CostFilter(state = state).toSpecification()
+
+        val statePathMock = mock<Path<String>>()
+        val medicalProviderJoinMock = mock<Join<CostRecord, MedicalProvider>>() {
+            on(it.get(MedicalProvider_.state)).thenReturn(statePathMock)
+        }
+        val predicateMock = mock<Predicate>()
+
+        whenever(costRecordMock.join(CostRecord_.medicalProvider)).thenReturn(medicalProviderJoinMock)
+        whenever(criteriaBuilderMock.equal(eq(statePathMock), eq(state))).thenReturn(predicateMock)
+
+        val predicate: Predicate? = specification.toPredicate(costRecordMock, criteriaQueryMock, criteriaBuilderMock)
+        expect(predicate).to.be.equal(predicateMock)
+        verify(costRecordMock).join(CostRecord_.medicalProvider)
+        verify(medicalProviderJoinMock).get(MedicalProvider_.state)
+        verify(criteriaBuilderMock).equal(eq(statePathMock), eq(state))
+    }
+
+    @Test
+    fun `should create an a specifcation with multiple filters present`() {
+        val state = "AZ"
+        val minimum = BigDecimal.ONE
+        val maximum = BigDecimal.TEN
+        val specification = CostFilter(state = state, averageMedicarePayments = minimum to maximum).toSpecification()
+
+        val statePathMock = mock<Path<String>>()
+        val medicalProviderJoinMock = mock<Join<CostRecord, MedicalProvider>>() {
+            on(it.get(MedicalProvider_.state)).thenReturn(statePathMock)
+        }
+
+        val combinedPredicateMock = mock<Predicate>()
+        val statePredicateMock = mock<Predicate>()
+
+        val averageCoveredChargePathMock = mock<Path<BigDecimal>>()
+        val averageCoveredChargePredicateMock = mock<Predicate>()
+
+        whenever(costRecordMock.get(CostRecord_.averageCoveredCharges)).thenReturn(averageCoveredChargePathMock)
+        whenever(criteriaBuilderMock.between(eq(averageCoveredChargePathMock), eq(minimum), eq(maximum))).thenReturn(averageCoveredChargePredicateMock)
+
+        whenever(costRecordMock.join(CostRecord_.medicalProvider)).thenReturn(medicalProviderJoinMock)
+        whenever(criteriaBuilderMock.equal(eq(statePathMock), eq(state))).thenReturn(statePredicateMock)
+        whenever(criteriaBuilderMock.and(any<Expression<Boolean>>(), any<Expression<Boolean>>())).thenReturn(combinedPredicateMock)
+
+        val predicate: Predicate? = specification.toPredicate(costRecordMock, criteriaQueryMock, criteriaBuilderMock)
+        expect(predicate).to.be.equal(combinedPredicateMock)
+        verify(costRecordMock).join(CostRecord_.medicalProvider)
+        verify(medicalProviderJoinMock).get(MedicalProvider_.state)
+        verify(criteriaBuilderMock).equal(eq(statePathMock), eq(state))
+        verify(costRecordMock).get(CostRecord_.averageCoveredCharges)
+        verify(criteriaBuilderMock).between(eq(averageCoveredChargePathMock), eq(minimum), eq(maximum))
     }
 }
