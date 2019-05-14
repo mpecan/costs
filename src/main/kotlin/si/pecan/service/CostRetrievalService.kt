@@ -1,28 +1,28 @@
 package si.pecan.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.domain.Specifications
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.stereotype.Service
 import si.pecan.domain.CostRecord
 import si.pecan.domain.CostRecord_
 import si.pecan.domain.MedicalProvider
 import si.pecan.domain.MedicalProvider_
+import si.pecan.dto.CostRecordDto
+import si.pecan.dto.toDto
 import si.pecan.repository.CostRecordsRepository
+import java.awt.print.Pageable
 import java.math.BigDecimal
 import javax.persistence.criteria.*
 
 @Service
 class CostRetrievalService(private val costRecordsRepository: CostRecordsRepository) {
-    fun getRecordsForFilter(filter: CostFilter) = costRecordsRepository.findAll(filter.toSpecification())
+    fun getRecordsForFilter(filter: CostFilter?, pageRequest: PageRequest): Page<CostRecordDto> {
+        val page = costRecordsRepository.findAll(filter.toSpecification(), pageRequest)
+        return page.map(CostRecord::toDto)
+    }
 }
-
-data class CostFilter(
-        val discharges: Pair<Long, Long>? = null,
-        val averageCoveredCharges: Pair<BigDecimal, BigDecimal>? = null,
-        val averageMedicarePayments: Pair<BigDecimal, BigDecimal>? = null,
-        val state: String? = null
-)
 
 
 fun CostFilter?.toSpecification(): Specification<CostRecord> {
