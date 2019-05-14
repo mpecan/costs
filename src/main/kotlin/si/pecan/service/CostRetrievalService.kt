@@ -1,7 +1,7 @@
 package si.pecan.service
 
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.domain.Specifications
 import org.springframework.stereotype.Service
@@ -12,13 +12,13 @@ import si.pecan.domain.MedicalProvider_
 import si.pecan.dto.CostRecordDto
 import si.pecan.dto.toDto
 import si.pecan.repository.CostRecordsRepository
-import java.awt.print.Pageable
 import java.math.BigDecimal
-import javax.persistence.criteria.*
+import javax.persistence.criteria.Join
+import javax.persistence.metamodel.SingularAttribute
 
 @Service
 class CostRetrievalService(private val costRecordsRepository: CostRecordsRepository) {
-    fun getRecordsForFilter(filter: CostFilter?, pageRequest: PageRequest): Page<CostRecordDto> {
+    fun getRecordsForFilter(filter: CostFilter?, pageRequest: Pageable): Page<CostRecordDto> {
         val page = costRecordsRepository.findAll(filter.toSpecification(), pageRequest)
         return page.map(CostRecord::toDto)
     }
@@ -32,15 +32,15 @@ fun CostFilter?.toSpecification(): Specification<CostRecord> {
     specifications.add(Specifications.where<CostRecord>(null))
     if (this?.discharges != null) {
         val (min, max) = this.discharges
-        specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.between(record.get(CostRecord_.totalDischarges), min, max) })
+        rangeSpecification(min, max, specifications, CostRecord_.totalDischarges)
     }
     if (this?.averageCoveredCharges != null) {
         val (min, max) = this.averageCoveredCharges
-        specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.between(record.get(CostRecord_.averageCoveredCharges), min, max) })
+        rangeSpecification(min, max, specifications, CostRecord_.averageCoveredCharges)
     }
     if (this?.averageMedicarePayments != null) {
         val (min, max) = this.averageMedicarePayments
-        specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.between(record.get<BigDecimal>(CostRecord_.averageMedicarePayments), min, max) })
+        rangeSpecification(min, max, specifications, CostRecord_.averageMedicarePayments)
     }
     if (this?.state != null) {
         specifications.add(Specification { record, _, criteriaBuilder ->
@@ -50,4 +50,12 @@ fun CostFilter?.toSpecification(): Specification<CostRecord> {
     }
     return specifications.reduce { a, b -> a.and(b) }
 
+}
+
+private inline fun <reified T : Number> rangeSpecification(min: T?, max: T?, specifications: MutableList<Specification<CostRecord>>, field: SingularAttribute<CostRecord, T>?) {
+    when {
+        min != null && max != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.and(criteriaBuilder.ge(record.get(field), min), criteriaBuilder.le(record.get(field), min)) })
+        min != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.ge(record.get(field), min) })
+        max != null -> specifications.add(Specification { record, _, criteriaBuilder -> criteriaBuilder.le(record.get(field), max) })
+    }
 }
