@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -26,10 +27,10 @@ public class V2__ImportData extends BaseJavaMigration {
     @Override
     public void migrate(Context context) throws Exception {
         final InputStream resourceAsStream = V2__ImportData.class.getClassLoader().getResourceAsStream("input_data.csv");
-        final Set<Long> insertedProviders = new HashSet<>();
+        final Set<Long> insertedProviders = Collections.synchronizedSet(new HashSet<>());
         if (resourceAsStream != null) {
             final CSVParser csvRecords = CSVParser.parse(resourceAsStream, Charset.forName("UTF-8"), CSVFormat.DEFAULT);
-            csvRecords.getRecords().stream().skip(1).forEach(record -> {
+            csvRecords.getRecords().parallelStream().skip(1).forEach(record -> {
                 Long recordId = record.getRecordNumber();
                 Long providerId = Optional.ofNullable(record.get(1)).map(Long::valueOf).orElse(null);
                 if (providerId == null) {
