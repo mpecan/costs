@@ -6,6 +6,7 @@ import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.test.context.junit4.SpringRunner
 import java.math.BigDecimal
 
@@ -15,7 +16,7 @@ import java.math.BigDecimal
 class CostRetrievalServiceIntegrationTests {
 
     companion object {
-        val PAGE_REQUEST = PageRequest.of(0, 10)
+        val PAGE_REQUEST = Pageable.unpaged()
     }
 
     @Autowired
@@ -23,7 +24,7 @@ class CostRetrievalServiceIntegrationTests {
 
     @Test
     fun `should retrieve all records when null filter is supplied`() {
-        val page = costRetrievalService.getRecordsForFilter(null, PAGE_REQUEST)
+        val page = costRetrievalService.getRecordsForFilter(null, PageRequest.of(0,10))
         expect(page.size).to.equal(10)
     }
 
@@ -33,6 +34,7 @@ class CostRetrievalServiceIntegrationTests {
         list.forEach {
             expect(it.totalDischarges).to.be.within(50L, 100L)
         }
+        expect(list.content.filter{ it.totalDischarges in 51..99 }).to.not.be.empty
     }
 
     @Test
