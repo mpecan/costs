@@ -66,7 +66,7 @@ public class V2__ImportData extends BaseJavaMigration {
     }
 
     private void insertProvider(Context context, Set<Long> insertedProviders, CSVRecord record, Long providerId) {
-        try (PreparedStatement insert = context.getConnection().prepareStatement("INSERT INTO medical_provider(id,name,street_address,city,state,zip_code,referral_region_description) VALUES (?,?,?,?,?,?,?)")) {
+        try (PreparedStatement insert = context.getConnection().prepareStatement("INSERT INTO medical_provider(id,name,street_address,city,state,zip_code,referral_region_description) VALUES (?,?,?,?,?,?,?) ON CONFLICT DO NOTHING ")) {
             insert.setLong(1, providerId);
             insert.setString(2, record.get(2));
             insert.setString(3, record.get(3));
