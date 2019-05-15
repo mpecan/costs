@@ -1,0 +1,15 @@
+export default {
+    // id: "id",
+    drgDefinition: "Procedure definition",
+    totalDischarges: "Total Discharges",
+    averageCoveredCharges: "Average Covered Charges",
+    averageTotalPayments: "Average Total Payments",
+    averageMedicarePayments: "Average Medicare Payments",
+    providerId: "Provider ID",
+    name: "Provider name",
+    streetAddress: "Provider street address",
+    city: "Provider City",
+    state: "Provider State",
+    zipCode: "Provider Zip Code",
+    referralRegionDescription: "Provider Referral Region Description",
+};
