@@ -5,7 +5,6 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
-    "@material-ui/styles": "^3.0.0-alpha.10",
     "http-proxy-middleware": "^0.19.1",
     "lodash": "^4.17.11",
     "material-ui-slider": "^3.0.0",
@@ -38,5 +37,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prop-types": "latest",
+    "jest-dom": "^3.2.2",
+    "jest-fetch-mock": "^2.1.2",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.13.0",
+    "react-test-renderer": "^16.8.6",
+    "react-testing-library": "^7.0.0",
+    "sinon": "^7.3.2"
   }
 }

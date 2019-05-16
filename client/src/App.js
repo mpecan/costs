@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import DataDisplay from "./DataDisplayContainer";
+import MainContainer from "./MainContainer";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import {BreakpointProvider} from 'react-socks';
 
@@ -8,10 +8,9 @@ function App() {
 
     return (
         <div className="App">
+            <CssBaseline/>
             <BreakpointProvider>
-                <CssBaseline>
-                    <DataDisplay />
-                </CssBaseline>
+                <MainContainer/>
             </BreakpointProvider>
         </div>
     );

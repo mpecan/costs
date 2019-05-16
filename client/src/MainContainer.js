@@ -7,38 +7,21 @@ import Filters from "./filter/Filters";
 import AppBar from "@material-ui/core/AppBar";
 import {withStyles} from "@material-ui/core/styles";
 import TablePagination from "@material-ui/core/TablePagination";
-import {DataDisplay} from "./DataDisplay";
+import DataDisplay from "./dataDisplay/DataDisplay";
 import {TableBody} from "@material-ui/core";
 import TableRow from "@material-ui/core/TableRow";
 import Table from "@material-ui/core/Table";
+import ErrorDialog from "./ErrorDialog";
 
 const styles = theme => ({
     root: {
         width: '100%',
-        maxWidth: 360,
         backgroundColor: theme.palette.background.paper,
-    },
-    card: {
-        maxWidth: "90%",
-        margin: "10px auto",
-
-    },
-    tableContainer: {
-        maxWidth: "90%",
-        margin: "30px auto",
-
-    },
-    itemContainer: {
-        padding: "0"
-    },
-    item: {
-        padding: "5px"
     }
-
 });
 
 
-class DataDisplayContainer extends PureComponent {
+class MainContainer extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -47,7 +30,8 @@ class DataDisplayContainer extends PureComponent {
             isLoading: true,
             count: 0,
             data: [],
-            filtersOpen: true
+            filtersOpen: true,
+            error: undefined,
         };
         this.fetchData({});
     }
@@ -66,24 +50,24 @@ class DataDisplayContainer extends PureComponent {
                 page: json.number,
                 rowsPerPage: json.numberOfElements
             });
+        }).catch(error => {
+            this.setState({...this.state, error: "Could not communicate to the server."});
         })
     }
 
     toggleFilters = (filtersOpen) => {
         this.setState({...this.state, filtersOpen})
     };
-
+    changeFilters = (newFilters) => this.fetchData({filters: newFilters});
 
     render() {
-        const {classes} = this.props;
-        const {data, isLoading, page, rowsPerPage, count, filtersOpen} = this.state;
+        const {data, isLoading, page, rowsPerPage, count, filtersOpen, error } = this.state;
         const columnNames = Object.keys(columns);
         return <div>
             <AppBar color="primary" position="static">
                 <h1>Providers</h1>
-
                 <Filters open={filtersOpen} toggle={this.toggleFilters}
-                         changeFilters={(newFilters) => this.fetchData({filters: newFilters})}/>
+                         changeFilters={this.changeFilters}/>
             </AppBar>
             <Table>
                 <TableBody>
@@ -97,27 +81,29 @@ class DataDisplayContainer extends PureComponent {
                             SelectProps={{
                                 native: true,
                             }}
-                            onChangePage={(_, number) => this.handleChangePage(number)}
-                            onChangeRowsPerPage={(event) => this.handleChangeRowsPerPage(event.target.value)}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
                         />
                     </TableRow>
                 </TableBody>
             </Table>
+            {error && <ErrorDialog content={error} close={() => this.setState({...this.state, error: undefined})} /> }
             {isLoading && <CircularProgress style={{marginLeft: '50%'}}/>}
-            <DataDisplay data={data} classes={classes} columnNames={columnNames}/>
+            <DataDisplay data={data} columnNames={columnNames}/>
         </div>;
     }
 
-    handleChangePage(page) {
+    handleChangePage = (_, page) => {
         const {rowsPerPage} = this.state;
         this.fetchData({page, rowsPerPage})
-    }
+    };
 
-    handleChangeRowsPerPage(rowsPerPage) {
+    handleChangeRowsPerPage = (event) => {
+        const rowsPerPage = event.target.value;
         const {page} = this.state;
         this.fetchData({page, rowsPerPage});
-    }
+    };
 }
 
 
-export default withStyles(styles)(DataDisplayContainer);
+export default withStyles(styles)(MainContainer);
