@@ -32,11 +32,12 @@ class MainContainer extends PureComponent {
             data: [],
             filtersOpen: true,
             error: undefined,
+            filters: ""
         };
         this.fetchData({});
     }
 
-    fetchData({page = this.state.page, rowsPerPage = this.state.rowsPerPage, filters = ""}) {
+    fetchData({page = this.state.page, rowsPerPage = this.state.rowsPerPage, filters = this.state.filters}) {
         fetch(`/api/providers?page=${page}&size=${rowsPerPage}${filters ? "&" + filters : ""}`).then(response => {
             if (response.status === 200) {
                 return response.json();
@@ -56,9 +57,13 @@ class MainContainer extends PureComponent {
     }
 
     toggleFilters = (filtersOpen) => {
-        this.setState({...this.state, filtersOpen})
+        this.setState({...this.state, filtersOpen});
     };
-    changeFilters = (newFilters) => this.fetchData({filters: newFilters});
+
+    changeFilters = (newFilters) => {
+        this.setState({...this.state, filters: newFilters});
+        this.fetchData({filters: newFilters});
+    };
 
     render() {
         const {data, isLoading, page, rowsPerPage, count, filtersOpen, error } = this.state;
@@ -87,7 +92,7 @@ class MainContainer extends PureComponent {
                     </TableRow>
                 </TableBody>
             </Table>
-            {error && <ErrorDialog content={error} close={() => this.setState({...this.state, error: undefined})} /> }
+            {error && <ErrorDialog content={error} close={() => this.setState({...this.state, error: null}, () => this.fetchData({})) } /> }
             {isLoading && <CircularProgress style={{marginLeft: '50%'}}/>}
             <DataDisplay data={data} columnNames={columnNames}/>
         </div>;

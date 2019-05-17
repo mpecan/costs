@@ -6,9 +6,10 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import Typography from "@material-ui/core/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import {ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import {Button} from "@material-ui/core";
+import {Button, Divider} from "@material-ui/core";
 import * as _ from "lodash";
 import {withStyles} from "@material-ui/core/styles";
+import Breakpoint from "react-socks";
 import Grid from "@material-ui/core/Grid";
 
 const styles = {
@@ -17,6 +18,9 @@ const styles = {
     },
     form: {
         width: "100%"
+    },
+    divider: {
+        margin: "10px"
     }
 };
 
@@ -79,11 +83,12 @@ class Filters extends PureComponent {
                         }}
                     >
                         <Grid container>
-                            <Grid item xs={12} xl={3}>
+                            <Grid item xs={12} xl={6}>
+                                <Typography>Discharges</Typography>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="minDischarges"
-                                    label={filterNames["minDischarges"]}
+                                    label={"Min"}
                                     value={this.state.filters.minDischarges}
                                     onChange={this.handleChange('minDischarges')}
                                     InputLabelProps={{
@@ -94,12 +99,10 @@ class Filters extends PureComponent {
                                     errorMessages={['Cannot be less than 0', 'Cannot be more than Max Discharges', 'Must be an integer']}
                                     margin="normal"
                                 />
-                            </Grid>
-                            <Grid item xs={12} xl={3}>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="maxDischarges"
-                                    label={filterNames["maxDischarges"]}
+                                    label={"Max"}
                                     value={this.state.filters.maxDischarges}
                                     onChange={this.handleChange('maxDischarges')}
                                     validators={[`minNumber:${this.state.filters.minDischarges || 0}`, 'matchRegexp:^[0-9]+$']}
@@ -110,12 +113,16 @@ class Filters extends PureComponent {
                                     type="number"
                                     margin="normal"
                                 />
+                                <Breakpoint medium down>
+                                    <Divider className={classes.divider} />
+                                </Breakpoint>
                             </Grid>
-                            <Grid item xs={12} xl={3}>
+                            <Grid item xs={12} xl={6}>
+                                <Typography>Average covered charges</Typography>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="minAverageCoveredCharges"
-                                    label={filterNames["minAverageCoveredCharges"]}
+                                    label={"Min"}
                                     value={this.state.filters.minAverageCoveredCharges}
                                     onChange={this.handleChange('minAverageCoveredCharges')}
                                     validators={['minNumber:0', `maxNumber:${this.state.filters.maxAverageCoveredCharges || 930000}`, 'matchRegexp:^[0-9]+([.,][0-9]+)?$']}
@@ -126,12 +133,10 @@ class Filters extends PureComponent {
                                     type="number"
                                     margin="normal"
                                 />
-                            </Grid>
-                            <Grid item xs={12} xl={3}>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="maxAverageCoveredCharges"
-                                    label={filterNames["maxAverageCoveredCharges"]}
+                                    label={"Max"}
                                     value={this.state.filters.maxAverageCoveredCharges}
                                     onChange={this.handleChange('maxAverageCoveredCharges')}
                                     validators={[`minNumber:${this.state.filters.minAverageCoveredCharges || 0}`, 'matchRegexp:^[0-9]+([.,][0-9]+)?$']}
@@ -142,12 +147,16 @@ class Filters extends PureComponent {
                                     type="number"
                                     margin="normal"
                                 />
+                                <Breakpoint medium down>
+                                    <Divider className={classes.divider} />
+                                </Breakpoint>
                             </Grid>
-                            <Grid item xs={12} xl={3}>
+                            <Grid item xs={12} xl={6}>
+                                <Typography>Average medicare payments</Typography>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="minAverageMedicarePayments"
-                                    label={filterNames["minAverageMedicarePayments"]}
+                                    label={"Min"}
                                     value={this.state.filters.minAverageMedicarePayments}
                                     onChange={this.handleChange('minAverageMedicarePayments')}
                                     validators={['minNumber:0', `maxNumber:${this.state.filters.maxAverageMedicarePayments || 930000}`, 'matchRegexp:^[0-9]+([.,][0-9]+)?$']}
@@ -158,12 +167,10 @@ class Filters extends PureComponent {
                                     type="number"
                                     margin="normal"
                                 />
-                            </Grid>
-                            <Grid item xs={12} xl={3}>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="maxAverageMedicarePayments"
-                                    label={filterNames["maxAverageMedicarePayments"]}
+                                    label={"max"}
                                     value={this.state.filters.maxAverageMedicarePayments}
                                     onChange={this.handleChange('maxAverageMedicarePayments')}
                                     validators={[`minNumber:${this.state.filters.minAverageMedicarePayments || 0}`, 'matchRegexp:^[0-9]+([.,][0-9]+)?$']}
@@ -174,8 +181,12 @@ class Filters extends PureComponent {
                                     type="number"
                                     margin="normal"
                                 />
+
+                                <Breakpoint medium down>
+                                    <Divider className={classes.divider} />
+                                </Breakpoint>
                             </Grid>
-                            <Grid item xs={12} xl={3}>
+                            <Grid item xs={12} xl={6}>
                                 <TextValidator
                                     className={classes.formElement}
                                     id="state"

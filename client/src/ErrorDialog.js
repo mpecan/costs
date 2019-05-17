@@ -14,16 +14,13 @@ class ErrorDialog extends React.Component {
 
         return (
             <div>
-                <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-                    Open responsive dialog
-                </Button>
                 <Dialog
                     fullScreen={fullScreen}
                     open={true}
                     onClose={close}
                     aria-labelledby="responsive-dialog-title"
                 >
-                    <DialogTitle id="responsive-dialog-title">{"Use Google's location service?"}</DialogTitle>
+                    <DialogTitle id="responsive-dialog-title">{"Error"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             {content}
@@ -31,7 +28,7 @@ class ErrorDialog extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} color="primary" autoFocus>
-                            Close
+                            Try again?
                         </Button>
                     </DialogActions>
                 </Dialog>
