@@ -27,13 +27,9 @@ class CostRetrievalService(private val costRecordsRepository: CostRecordsReposit
 @Suppress("DEPRECATION")
 fun CostFilter?.toSpecification(): Specification<CostRecord> {
     this ?: return Specification.where<CostRecord>(null)!!
-    return Specification.where<CostRecord>(null).let {
-        if (this.discharges != null) {
-            val (min, max) = this.discharges
-            rangeSpecification(min, max, CostRecord_.totalDischarges)?.and(it) ?: it
-        } else {
-            it
-        }
+    return Specification.where<CostRecord>(null).letIf(this.discharges != null) {
+        val (min, max) = this.discharges!!
+        rangeSpecification(min, max, CostRecord_.totalDischarges)?.and(it) ?: it
     }.letIf(this.averageCoveredCharges != null) {
         val (min, max) = this.averageCoveredCharges!!
         rangeSpecification(min, max, CostRecord_.averageCoveredCharges)?.and(it) ?: it
