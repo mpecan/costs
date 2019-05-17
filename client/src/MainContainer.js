@@ -61,7 +61,7 @@ class MainContainer extends PureComponent {
     };
 
     changeFilters = (newFilters) => {
-        this.setState({...this.state, filters: newFilters});
+        this.setState({...this.state, filters: newFilters, filtersOpen: false});
         this.fetchData({filters: newFilters});
     };
 

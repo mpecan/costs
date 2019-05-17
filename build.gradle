@@ -21,7 +21,9 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation ('org.springframework.boot:spring-boot-starter-data-jpa') {
+		exclude group: 'org.springframework.data'
+	}
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.flywaydb:flyway-core'
@@ -29,6 +31,7 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 	implementation 'org.apache.commons:commons-csv:1.6'
 	implementation 'org.springframework.data:spring-data-jpa:2.2.0.M4'
+	implementation 'org.springframework.data:spring-data-commons:2.2.0.M4'
 
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -77,4 +80,4 @@ task copyWebApp(type: Copy) {
 
 appNpmBuild.dependsOn appNpmInstall
 copyWebApp.dependsOn appNpmBuild
-compileKotlin.dependsOn copyWebApp
+jar.dependsOn copyWebApp
