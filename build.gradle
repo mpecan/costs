@@ -17,6 +17,7 @@ sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
+	maven { url "https://repo.spring.io/milestone" }
 }
 
 dependencies {
@@ -27,7 +28,8 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 	implementation 'org.apache.commons:commons-csv:1.6'
-	
+	implementation 'org.springframework.data:spring-data-jpa:2.2.0.M4'
+
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 

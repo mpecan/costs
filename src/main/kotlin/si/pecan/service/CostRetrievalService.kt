@@ -3,7 +3,6 @@ package si.pecan.service
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.data.jpa.domain.Specifications
 import org.springframework.stereotype.Service
 import si.pecan.domain.CostRecord
 import si.pecan.domain.CostRecord_
@@ -12,7 +11,6 @@ import si.pecan.domain.MedicalProvider_
 import si.pecan.dto.CostRecordDto
 import si.pecan.dto.toDto
 import si.pecan.repository.CostRecordsRepository
-import java.math.BigDecimal
 import javax.persistence.criteria.Join
 import javax.persistence.metamodel.SingularAttribute
 
@@ -28,8 +26,8 @@ class CostRetrievalService(private val costRecordsRepository: CostRecordsReposit
 // Using deprecated method as the static function Specification.where does not have the correct @Nullable annotation on its parameter value
 @Suppress("DEPRECATION")
 fun CostFilter?.toSpecification(): Specification<CostRecord> {
-    this ?: return Specifications.where<CostRecord>(null)
-    return Specifications.where<CostRecord>(null).let {
+    this ?: return Specification.where<CostRecord>(null)!!
+    return Specification.where<CostRecord>(null).let {
         if (this.discharges != null) {
             val (min, max) = this.discharges
             rangeSpecification(min, max, CostRecord_.totalDischarges)?.and(it) ?: it
@@ -47,7 +45,7 @@ fun CostFilter?.toSpecification(): Specification<CostRecord> {
             val join: Join<CostRecord, MedicalProvider> = record.join(CostRecord_.medicalProvider)
             criteriaBuilder.equal(join.get<String>(MedicalProvider_.state), state)
         }.and(it)
-    }
+    }!!
 }
 
 private inline fun <reified T> T.letIf(check: Boolean, operation: (T) -> T) = if (check) {
