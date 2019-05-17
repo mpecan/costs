@@ -9,3 +9,12 @@ services:
       - POSTGRES_USER=patients
       - POSTGRES_PASSWORD=development1234
       - POSTGRES_DB=patients
+
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/patients
+    volumes:
+      - .:/code
