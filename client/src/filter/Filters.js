@@ -49,7 +49,8 @@ class Filters extends PureComponent {
                 maxDischarges: "",
                 state: "",
             },
-            filtersDisplay:""
+            filtersDisplay:"",
+            panelExpanded: false
         }
     }
 
@@ -60,19 +61,19 @@ class Filters extends PureComponent {
 
     onSubmit = () => {
         const definedFilters = Object.keys(this.state.filters).filter((key) => this.state.filters[key]);
-        this.setState({...this.state, filtersDisplay: definedFilters.map((key) => `${filterNames[key]}=${this.state.filters[key]}`).join(", ")});
+        this.setState({...this.state, filtersDisplay: definedFilters.map((key) => `${filterNames[key]}=${this.state.filters[key]}`).join(", "), panelExpanded: false});
         this.props.changeFilters(definedFilters.map((key) => `${_.snakeCase(key)}=${this.state.filters[key]}`).join("&"));
 
     };
 
     render() {
         const {classes} = this.props;
-        const {filtersDisplay} = this.state;
-        return <ExpansionPanel>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+        const {filtersDisplay, panelExpanded} = this.state;
+        return <ExpansionPanel expanded={panelExpanded}  onChange={() => this.setState({...this.state, panelExpanded: !this.state.panelExpanded})}>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>} >
                 <Grid container><Grid item xs={12}><Typography variant={"title"}>Filters</Typography></Grid>{filtersDisplay && <Grid item xs={12}><Typography variant={"caption"}>{filtersDisplay}</Typography></Grid>}</Grid>
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
+            <ExpansionPanelDetails >
 
                 <Grid container>
                     <ValidatorForm

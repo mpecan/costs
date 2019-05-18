@@ -70,7 +70,7 @@ class MainContainer extends PureComponent {
         const columnNames = Object.keys(columns);
         return <div>
             <AppBar color="primary" position="static">
-                <h1>Providers</h1>
+                <h1>Cost Explorer</h1>
                 <Filters open={filtersOpen} toggle={this.toggleFilters}
                          changeFilters={this.changeFilters}/>
             </AppBar>
