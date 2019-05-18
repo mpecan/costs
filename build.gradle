@@ -92,6 +92,6 @@ test {
 
 appYarnBuild.dependsOn appYarnInstall
 copyWebApp.dependsOn appYarnBuild
-compileKotlin.dependsOn copyWebApp
+processResources.dependsOn copyWebApp
 appYarnTest.dependsOn appYarnInstall
 test.dependsOn appYarnTest
