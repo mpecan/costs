@@ -7,8 +7,10 @@ import org.junit.Before
 import org.junit.Test
 import org.springframework.core.MethodParameter
 import org.springframework.web.context.request.NativeWebRequest
+import si.pecan.repository.MedicalProviderRepository
 import si.pecan.service.CostFilter
 import javax.servlet.http.HttpServletRequest
+import javax.validation.ValidationException
 import kotlin.math.cos
 
 class CostFilterArgumentResolverTest {
@@ -25,7 +27,9 @@ class CostFilterArgumentResolverTest {
 
     @Before
     fun init() {
-        subject = CostFilterArgumentResolver()
+        subject = CostFilterArgumentResolver(mock {
+            on(mock.findDistinctStates()).thenReturn(listOf("AZ"))
+        })
     }
 
     @Test
@@ -55,6 +59,15 @@ class CostFilterArgumentResolverTest {
         expect(costFilter.discharges).equal(null to 1000L)
     }
 
+    @Test(expected = ValidationException::class)
+    fun `throws validation exception in case of invalid input for max_discharges`() {
+        whenever(httpServletRequest.parameterMap).thenReturn(mapOf("max_discharges" to arrayOf("afasafassd")))
+        val resolvedArgument = subject.resolveArgument(methodParameter, null, mockedNativeWebRequest, null)
+        expect(resolvedArgument).`is`.instanceof(CostFilter::class.java)
+        val costFilter = resolvedArgument as CostFilter
+        expect(costFilter.discharges).equal(null to 1000L)
+    }
+
     @Test
     fun `parses filter from request passed in with max_average_medicare_payments`() {
         whenever(httpServletRequest.parameterMap).thenReturn(mapOf("max_average_medicare_payments" to arrayOf("1000")))
@@ -72,4 +85,14 @@ class CostFilterArgumentResolverTest {
         val costFilter = resolvedArgument as CostFilter
         expect(costFilter.state).equal("AZ")
     }
+
+    @Test(expected = ValidationException::class)
+    fun `throws validation exception in case of invalid input for state`() {
+        whenever(httpServletRequest.parameterMap).thenReturn(mapOf("state" to arrayOf("NY")))
+        val resolvedArgument = subject.resolveArgument(methodParameter, null, mockedNativeWebRequest, null)
+        expect(resolvedArgument).`is`.instanceof(CostFilter::class.java)
+        val costFilter = resolvedArgument as CostFilter
+        expect(costFilter.discharges).equal(null to 1000L)
+    }
+
 }

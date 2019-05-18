@@ -40,7 +40,6 @@ describe('testing the responsive nature of the component', () => {
                 <DataDisplay columnNames={[columnName]} data={data}/>
             </BreakpointProvider>
         );
-        console.log(wrapper.html())
         expect(wrapper.find('table').length).toBe(1);
     });
 })
