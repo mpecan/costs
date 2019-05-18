@@ -12,6 +12,7 @@ const styles = {
     container: {
         maxWidth: "90%",
         margin: "30px auto",
+        overflow: "auto"
     }
 };
 
