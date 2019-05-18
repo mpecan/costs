@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mpecan/costs.svg?branch=master)](https://travis-ci.org/mpecan/costs)
+
 # Costs explorer application
 
 ## Prerequisites
@@ -12,4 +14,5 @@ For ease of use and setup you can use the supplied docker-compose file by runnin
 You can either use the supplied docker-compose and run `docker-compose up` after the project has been built or run `./gradlew bootRun` (which will also build the client).
 
 ## Testing
-Running `./gradlew test` will runn all application tests 
+*prerequisite* - Run the test database by running `docker-compose up -d test-db`
+Running `./gradlew test` will run all application tests including frontend tests. 
