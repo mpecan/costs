@@ -9,6 +9,15 @@ services:
       - POSTGRES_USER=patients
       - POSTGRES_PASSWORD=development1234
       - POSTGRES_DB=patients
+  test-db:
+    image: "postgres:11"
+    container_name: "patients_test_postgres"
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_USER=patients
+      - POSTGRES_PASSWORD=development1234
+      - POSTGRES_DB=patients-test
 
   web:
     build: .

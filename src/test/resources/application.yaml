@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:15432/patients-test
+    username: patients
+    password: development1234
