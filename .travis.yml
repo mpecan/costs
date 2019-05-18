@@ -5,7 +5,7 @@ services:
 
 env:
   global:
-    - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/patients-test
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/patients_test
     - SPRING_DATASOURCE_PASSWORD=
     - SPRING_DATASOURCE_USER=postgres
 
